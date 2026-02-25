@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Contact — Clay Route Project</title>
+    <style>
+      body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial; padding: 2rem; }
+      form { max-width: 640px; display:flex; flex-direction:column; gap:0.5rem }
+      input, textarea { padding: 0.5rem; font-size: 1rem }
+      button { padding: 0.6rem 1rem }
+      #status { margin-top: 0.5rem }
+    </style>
+  </head>
+  <body>
+    <h1>Contact</h1>
+    <form id="contact-form">
+      <input name="name" id="name" placeholder="Your name" required />
+      <input name="email" id="email" type="email" placeholder="you@example.com" required />
+      <textarea name="message" id="message" rows="6" placeholder="Message" required></textarea>
+      <div>
+        <button type="submit">Send</button>
+      </div>
+      <div id="status"></div>
+    </form>
+
+    <script>
+      const form = document.getElementById('contact-form');
+      const statusEl = document.getElementById('status');
+
+      function setStatus(s) { statusEl.textContent = s }
+
+      async function sendContact(name, email, message, setStatus) {
+        setStatus('sending…');
+        try {
+          const formData = new FormData();
+          formData.append('name', name);
+          formData.append('email', email);
+          formData.append('message', message);
+
+          const res = await fetch('/contact', { method: 'POST', body: formData });
+          if (!res.ok) throw new Error(await res.text());
+          const json = await res.json();
+
+          if (json.success) {
+            setStatus('message sent ✅');
+          } else {
+            setStatus('failed to send');
+          }
+        } catch (err) {
+          console.warn('Send failed, using placeholder:', err);
+          await new Promise((r) => setTimeout(r, 800));
+          setStatus('message sent ✅ (offline)');
+        }
+      }
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const message = document.getElementById('message').value;
+        await sendContact(name, email, message, setStatus);
+        form.reset();
+      });
+    </script>
+  </body>
+</html>

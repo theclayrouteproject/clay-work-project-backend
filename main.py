@@ -1,7 +1,12 @@
 from fastapi import FastAPI, Form
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 
 app = FastAPI()
+
+# Serve static assets from /static and provide a simple form at /form
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 app.add_middleware(
     CORSMiddleware,
@@ -14,6 +19,11 @@ app.add_middleware(
 @app.get("/")
 def root():
     return {"message": "Welcome to The Clay Route Project API"}
+
+
+@app.get("/form")
+def form_page():
+    return FileResponse("static/index.html")
 
 @app.get("/pottery")
 def pottery():
