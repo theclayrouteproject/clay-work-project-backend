@@ -43,6 +43,15 @@ def get_item(item_id: int):
             return i
     return {"error": "Not found"}
 
+
+@app.get("/glazes")
+def get_glazes():
+    return [
+        {"id": 1, "name": "Celadon Mist", "finish": "Smooth semi-gloss green", "cone": 6},
+        {"id": 2, "name": "Iron Rutile", "finish": "Rust-brown satin texture with flecks", "cone": 5},
+        {"id": 3, "name": "Shino White", "finish": "Milky matte white with iron spotting", "cone": 10},
+    ]
+
 @app.post("/contact")
 async def contact(name: str = Form(...), email: str = Form(...), message: str = Form(...)):
     print(f"📩 {name} ({email}): {message}")
